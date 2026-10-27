@@ -22,6 +22,7 @@
   }));
   const inks = [...document.querySelectorAll('[data-ink]')].map(element => ({
     kind: element.hasAttribute('data-radial') ? 'radial' : 'ink', element, progress: 0, previous: -1,
+    once: element.hasAttribute('data-ink-once'), startedAt: null,
     front: element.querySelector('[data-ink-front]'),
     image: element.querySelector('.ink-image'),
     height: element.viewBox.baseVal.height,
@@ -51,7 +52,7 @@
     const finishBeforeBottom = Math.max(0, maxScroll - Math.min(180, viewport * .2));
     for (const item of items) {
       const {top, boxHeight: height} = item;
-      if (item.kind === 'handwriting') continue;
+      if (item.kind === 'handwriting' || item.once) continue;
       if (item.kind === 'ink') {
         item.start = top - viewport * 1.04;
         item.end = top + height - viewport * .5;
@@ -127,11 +128,23 @@
         drawLetters(item);
         continue;
       }
-      let progress = Math.max(item.openingFloor || 0, clamp((scroll - item.start) / (item.end - item.start)));
-      if (intro) {
-        const elapsed = now - intro.start;
-        const openingProgress = clamp((elapsed - item.openingDelay) / item.openingDuration);
-        progress *= smooth(openingProgress);
+      let progress;
+      if (item.once) {
+        // The closing artwork needs to be visible before ink starts moving.
+        // Finish on a clock so a quick swipe or the page bottom cannot skip it.
+        const visibleDepth = Math.min(item.boxHeight * .45, viewport * .25);
+        if (item.progress < 1 && item.startedAt === null && scroll + viewport >= item.top + visibleDepth) {
+          item.startedAt = now;
+        }
+        progress = item.startedAt === null ? 0 : smooth(clamp((now - item.startedAt) / 1200));
+        drawing = drawing || (item.startedAt !== null && Math.max(item.progress, progress) < 1);
+      } else {
+        progress = Math.max(item.openingFloor || 0, clamp((scroll - item.start) / (item.end - item.start)));
+        if (intro) {
+          const elapsed = now - intro.start;
+          const openingProgress = clamp((elapsed - item.openingDelay) / item.openingDuration);
+          progress *= smooth(openingProgress);
+        }
       }
       // Keep the furthest reveal for this visit, even after scrolling up or resizing.
       progress = Math.max(item.progress, progress);

@@ -18,6 +18,7 @@ There is no build step, framework, CDN dependency, or runtime font conversion. F
 - “See you there :)” uses the same independent SVG handwriting animation, including the smile.
 - Scrolling immediately takes control. Remaining watercolours reveal from top to bottom with a continuous feathered edge.
 - Scroll reveals finish before the bottom of the page and track the visual viewport, including mobile browser bars expanding or collapsing without another swipe.
+- The final illustration waits until a visible portion enters the viewport, then paints itself over 1.2 seconds. It finishes without another swipe, including after a fast jump to the bottom.
 - The large rosette opens from its centre using a soft organic radial mask.
 - Every reveal advances only once per visit. Scrolling back or resizing never hides revealed content or replays a completed animation; a partially revealed element resumes from its furthest point.
 - Reduced motion, printing, and disabled JavaScript show complete content. The directions link has a 44px minimum touch target.
