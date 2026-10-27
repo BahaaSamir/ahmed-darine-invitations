@@ -1,0 +1,79 @@
+@font-face{font-family:Cormorant;src:url('./assets/fonts/cormorant-regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Cormorant;src:url('./assets/fonts/cormorant-medium.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:Cormorant;src:url('./assets/fonts/cormorant-semibold.woff2') format('woff2');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:Cormorant;src:url('./assets/fonts/cormorant-bold.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:Cormorant;src:url('./assets/fonts/cormorant-italic.woff2') format('woff2');font-style:italic;font-weight:400;font-display:swap}
+@font-face{font-family:Amiri;src:url('./assets/fonts/amiri.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Pinyon;src:url('./assets/fonts/pinyon.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+
+:root{color-scheme:light;--paper:#f5ebe1;--ink:#4a3a3a;--deep-ink:#3a2c2c}
+*{box-sizing:border-box}
+html{background:#e2d5c3}
+body{margin:0;color:var(--ink);font-family:Cormorant,Georgia,serif;background:#e2d5c3 url('./assets/images/parchment.jpg') repeat;background-size:640px;background-blend-mode:multiply}
+.backdrop{min-height:100svh;padding:0}
+.invitation{container-type:inline-size;position:relative;isolation:isolate;max-width:600px;margin:auto;overflow:hidden;text-align:center;background:var(--paper) url('./assets/images/parchment.jpg') repeat;background-size:640px;box-shadow:0 2px 4px #4a3a3a0f,0 24px 60px #4a3a3a29;display:flex;flex-direction:column;align-items:center}
+p,h1,h2,figure{margin:0}
+.ink-art{display:block;width:100%;height:auto;pointer-events:none}
+.arch{position:absolute;inset:0 0 auto;z-index:-1}
+.opening{display:flex;flex-direction:column;align-items:center;width:100%;padding:40cqw 4cqw 0}
+.blessing{font-family:Amiri,'Times New Roman',serif;font-size:4.3333cqw;line-height:1.8;color:var(--deep-ink)}
+.family-intro{margin-top:5cqw;font-size:2.8333cqw;letter-spacing:.03em}
+.parents{margin-top:1.3333cqw;font-size:2.5cqw;font-weight:700;letter-spacing:.12em;line-height:1.6;text-transform:uppercase;color:#2e2222;-webkit-text-stroke:.035em #2e2222;paint-order:stroke fill}
+.inviting{margin-top:5cqw;font-size:2.8333cqw;line-height:1.5}
+.occasion{margin-top:.6667cqw;font-size:2.5cqw;font-weight:500;letter-spacing:.12em;line-height:1.6;text-transform:uppercase}
+.of{margin-top:5cqw;font-size:2.8333cqw;font-style:italic;line-height:1.5}
+.names{margin:2.6667cqw 0 0;display:flex;flex-direction:column;align-items:center;color:var(--deep-ink);font-weight:400}
+.name-svg{display:block;height:9.3917cqw;width:auto;overflow:visible;fill:currentColor}
+.name-svg.ampersand{height:5.3166cqw}
+.seal{position:relative;z-index:2;display:block;width:18cqw;height:18cqw;margin-top:13.5cqw}
+.scene{position:relative;width:100%;margin-top:-23.7cqw}
+.scene-text{position:absolute;inset:42% 0 auto;transform:translateY(calc(-50% + 3.1667cqw));z-index:1;padding:0 3.3333cqw;display:flex;flex-direction:column;align-items:center;text-shadow:0 0 1.6667cqw #f8ece4a6}
+.weekday,.location-label{font-size:2.3333cqw;font-weight:500;letter-spacing:.3em;text-transform:uppercase;line-height:1.6}
+.date{margin-top:.3333cqw;font-size:3.8333cqw;font-weight:600;letter-spacing:.1em;line-height:1.3;text-transform:uppercase;color:var(--deep-ink)}
+.time{margin-top:.6667cqw;font-size:3cqw;font-style:italic;letter-spacing:.04em;line-height:1.5}
+.location{margin-top:6.1667cqw;display:flex;flex-direction:column;align-items:center}
+.venue{margin-top:.6667cqw;font-size:3.1667cqw;font-weight:600;letter-spacing:.08em;line-height:1.35;text-transform:uppercase;color:var(--deep-ink)}
+.address{margin-top:.3333cqw;font-size:2.8333cqw;font-style:italic;line-height:1.5}
+.directions{margin-top:6.8333cqw;display:inline-flex;align-items:center;justify-content:center;min-height:44px;gap:1.3333cqw;padding:0 3.3333cqw 0 1cqw;border-radius:999px;border:1px solid #555c8c;box-shadow:inset 0 0 0 1px #f5ebe159,0 .6667cqw 2cqw #4a3a3a38;color:#fff;text-decoration:none;text-shadow:0 1px .3333cqw #3c2822b3;font-size:max(10px,2cqw);font-weight:600;letter-spacing:.22em;text-transform:uppercase;background-color:#8e6d62;background-image:linear-gradient(180deg,#fff0e624,#3c28221f),url('./assets/images/button-pattern.png');background-size:auto,9cqw;transition:box-shadow 180ms ease,scale 180ms ease}
+.directions img{width:4.6667cqw;height:4.6667cqw;border-radius:50%;box-shadow:0 0 0 1px #f5ebe173}
+.directions:focus-visible{outline:3px solid #555c8c;outline-offset:5px}
+.directions:active{scale:.97}
+.dress-code{position:relative;z-index:1;margin-top:7.6667cqw;padding:0 4cqw}
+.section-title{font-size:2.5cqw;font-weight:400;letter-spacing:.14em;text-transform:uppercase}
+.dress-code p{margin-top:1cqw;font-size:3.1667cqw;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.timeline{margin-top:10.6667cqw;padding:0 4cqw;width:100%;display:flex;flex-direction:column;align-items:center}
+.timeline ol{position:relative;list-style:none;margin:3.6667cqw 0 0;padding:0;width:100%;max-width:73.3333cqw}
+.timeline-track{position:absolute;top:6cqw;bottom:6cqw;left:calc(50% - .5833cqw);width:1.1667cqw;opacity:.6;background:url('./assets/images/timeline-pattern.png') center top/100% auto repeat-y;transform-origin:top}
+.timeline li:not(.timeline-track){position:relative;display:grid;grid-template-columns:minmax(0,1fr) 8.6667cqw minmax(0,1fr);align-items:center;min-height:12cqw}
+.event-name{text-align:right;font-size:2.5cqw;font-weight:500;letter-spacing:.1em;line-height:1.4;text-transform:uppercase}
+.timeline img{justify-self:center;width:5.6667cqw;height:5.6667cqw;border-radius:50%;background:var(--paper);box-shadow:0 0 0 .6667cqw var(--paper)}
+.event-time{text-align:left;font-size:3.1667cqw;font-style:italic;letter-spacing:.03em}
+.closing{position:relative;z-index:1;margin-top:7.5cqw;padding:0 5.3333cqw;display:flex;flex-direction:column;align-items:center}
+.closing p:first-child{max-width:66.6667cqw;font-size:3.1667cqw;font-style:italic;line-height:1.5;text-wrap:balance}
+.signoff{margin-top:.6667cqw;font-family:Pinyon,cursive;font-size:5.6667cqw;line-height:1.3;color:var(--deep-ink)}
+.signature-svg{height:6.5167cqw;margin:0 auto .85cqw}
+.smile{white-space:nowrap}.smile span{display:inline-block;transform:translateY(-.13em);margin-right:.02em}
+.prayer-hall{margin-top:3cqw}
+.friends .family-intro{margin-top:4cqw}
+.friends .names{margin-top:7.5cqw}
+.friends .name-svg.bride{height:8.625cqw}
+.friends .inviting{position:relative;z-index:2;margin-top:7.5cqw}
+.friends .occasion{position:relative;z-index:2;margin-top:.3333cqw}
+.friends .seal{margin-top:13cqw}
+.friends .scene{margin-top:-23.2cqw}
+.friends .scene-text{transform:translateY(calc(-50% + 4.6667cqw))}
+.scene-intro{max-width:60cqw;font-size:3.6667cqw;font-style:italic;line-height:1.4;text-wrap:balance}
+.friends .weekday{margin-top:3.3333cqw}
+.friends .location{margin-top:3.3333cqw}
+.friends .directions{margin-top:4cqw}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* All content is visible by default. JS enhances only when motion is allowed. */
+.invitation{transition:opacity 650ms ease}
+.motion-pending .invitation{opacity:0}
+.motion-ready [data-reveal]{opacity:var(--reveal,1);translate:0 var(--reveal-y,0px)}
+.motion-ready .timeline-track{scale:1 var(--line-progress,1)}
+@media (min-width:641px){.backdrop{padding:48px 0}}
+@media (hover:hover){.directions:hover{box-shadow:inset 0 0 0 1px #f5ebe180,0 1cqw 3cqw #4a3a3a50;scale:1.025}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}.motion-ready [data-reveal]{opacity:1;translate:none}.motion-ready .timeline-track{scale:1}.ink-image,.letter-fill{mask:none!important}}
+@media print{.backdrop{padding:0}.invitation{box-shadow:none}.motion-ready [data-reveal]{opacity:1;translate:none}.motion-ready .timeline-track{scale:1}.ink-image,.letter-fill{mask:none!important}}
