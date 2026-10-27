@@ -17,8 +17,9 @@ There is no build step, framework, CDN dependency, or runtime font conversion. F
 - SVG names draw letter by letter once they enter view, using an independent clock. Scrolling during the drawing never skips, accelerates, or reverses the pen.
 - “See you there :)” uses the same independent SVG handwriting animation, including the smile.
 - Scrolling immediately takes control. Remaining watercolours reveal from top to bottom with a continuous feathered edge.
+- Scroll reveals finish before the bottom of the page and track the visual viewport, including mobile browser bars expanding or collapsing without another swipe.
 - The large rosette opens from its centre using a soft organic radial mask.
-- Initial copy stays readable after the opening sequence. Lower sections reverse naturally when scrolling back.
+- Every reveal advances only once per visit. Scrolling back or resizing never hides revealed content or replays a completed animation; a partially revealed element resumes from its furthest point.
 - Reduced motion, printing, and disabled JavaScript show complete content. The directions link has a 44px minimum touch target.
 
 `shared/invitation.js` contains timing and scroll ranges; `shared/invitation.css` contains the common design and the friends variant spacing. Each HTML file contains real SVG glyph outlines and pen masks. `Family_Invite/tools/build_name_svg.py` documents the font-to-path process and hand-traced pen trajectories; fonttools is required only when rebuilding these outlines.

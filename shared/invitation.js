@@ -3,6 +3,7 @@
   'use strict';
   const root = document.documentElement;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const visualViewport = window.visualViewport;
   const invitation = document.querySelector('.invitation');
   const clamp = value => Math.min(1, Math.max(0, value));
   const smooth = value => value * value * (3 - 2 * value);
@@ -11,15 +12,16 @@
   let needsMeasure = true;
   let viewport = 0;
   let maxScroll = 0;
+  let pageHeight = 0;
   let intro = null;
   let firstRun = true;
 
   const reveals = [...document.querySelectorAll('[data-reveal]')].map(element => ({
-    kind: 'reveal', element, previous: -1,
+    kind: 'reveal', element, progress: 0, previous: -1,
     stagger: Number(element.dataset.stagger || 0)
   }));
   const inks = [...document.querySelectorAll('[data-ink]')].map(element => ({
-    kind: element.hasAttribute('data-radial') ? 'radial' : 'ink', element, previous: -1,
+    kind: element.hasAttribute('data-radial') ? 'radial' : 'ink', element, progress: 0, previous: -1,
     front: element.querySelector('[data-ink-front]'),
     image: element.querySelector('.ink-image'),
     height: element.viewBox.baseVal.height,
@@ -35,13 +37,41 @@
       progress: 0, duration: Math.min(3200, 1000 + letters.length * 58)};
   });
   const allLetters = handwritings.flatMap(item => item.letters);
-  const track = {kind: 'track', element: document.querySelector('.timeline ol'), previous: -1};
+  const track = {kind: 'track', element: document.querySelector('.timeline ol'), progress: 0, previous: -1};
   const trackLine = document.querySelector('.timeline-track');
+
+  const visibleHeight = () => visualViewport?.height || window.innerHeight || root.clientHeight;
+  const contentHeight = () => (document.scrollingElement || root).scrollHeight;
+
+  function measureRanges(height = visibleHeight(), documentHeight = contentHeight()) {
+    viewport = height;
+    pageHeight = documentHeight;
+    maxScroll = Math.max(0, pageHeight - viewport);
+    // Finish comfortably before the bottom, including while browser chrome moves.
+    const finishBeforeBottom = Math.max(0, maxScroll - Math.min(180, viewport * .2));
+    for (const item of items) {
+      const {top, boxHeight: height} = item;
+      if (item.kind === 'handwriting') continue;
+      if (item.kind === 'ink') {
+        item.start = top - viewport * 1.04;
+        item.end = top + height - viewport * .5;
+      } else if (item.kind === 'radial') {
+        item.start = top - viewport * .98;
+        item.end = top + height - viewport * .7;
+      } else if (item.kind === 'track') {
+        item.start = top - viewport * .9;
+        item.end = top + height - viewport * .68;
+      } else {
+        item.start = top - viewport * .97 + item.stagger * Math.min(14, viewport * .018);
+        item.end = item.start + Math.min(90, viewport * .13);
+      }
+      item.end = Math.min(item.end, finishBeforeBottom);
+      item.start = Math.min(item.start, item.end - 1);
+    }
+  }
 
   function measure() {
     // Measure untransformed layout once, then use cached positions on scroll.
-    viewport = document.documentElement.clientHeight;
-    maxScroll = Math.max(0, document.documentElement.scrollHeight - viewport);
     const scroll = window.scrollY;
     for (const item of items) {
       const rect = item.element.getBoundingClientRect();
@@ -50,25 +80,9 @@
       const height = rect.height;
       item.top = top;
       item.boxHeight = height;
-      if (item.kind === 'handwriting') continue;
-      if (item.kind === 'ink') {
-        item.start = top - viewport * .92;
-        item.end = top + height - viewport * .2;
-      } else if (item.kind === 'radial') {
-        item.start = top - viewport * .9;
-        item.end = top + height - viewport * .55;
-      } else if (item.kind === 'track') {
-        item.start = top - viewport * .78;
-        item.end = top + height - viewport * .58;
-      } else {
-        item.start = top - viewport * .91 + item.stagger * Math.min(22, viewport * .025);
-        item.end = item.start + Math.min(125, viewport * .19);
-      }
-      // The last artwork and elements must finish before the page runs out.
-      item.end = Math.min(item.end, maxScroll);
-      item.start = Math.min(item.start, item.end - 1);
       item.previous = -1;
     }
+    measureRanges();
     needsMeasure = false;
   }
 
@@ -94,12 +108,16 @@
     frame = 0;
     if (reducedMotion.matches) return;
     if (needsMeasure) measure();
-    const scroll = Math.max(0, Math.min(maxScroll, window.scrollY));
+    // Visual-viewport changes can arrive without a window resize or another swipe.
+    const height = visibleHeight();
+    const documentHeight = contentHeight();
+    if (height !== viewport || documentHeight !== pageHeight) measureRanges(height, documentHeight);
+    const scroll = Math.max(0, visualViewport?.pageTop ?? window.scrollY);
     let drawing = false;
     for (const item of items) {
       if (item.kind === 'handwriting') {
         // Visibility starts the pen once. Only elapsed time moves it afterwards.
-        if (item.startedAt === null && scroll + viewport * .88 > item.top) {
+        if (item.startedAt === null && scroll + viewport * .98 > item.top) {
           item.startedAt = now + (intro ? item.openingDelay : 100);
         }
         if (item.startedAt !== null) {
@@ -115,6 +133,9 @@
         const openingProgress = clamp((elapsed - item.openingDelay) / item.openingDuration);
         progress *= smooth(openingProgress);
       }
+      // Keep the furthest reveal for this visit, even after scrolling up or resizing.
+      progress = Math.max(item.progress, progress);
+      item.progress = progress;
       if (progress === item.previous) continue;
       item.previous = progress;
       if (item.kind === 'reveal') {
@@ -152,7 +173,7 @@
       cancelAnimationFrame(frame);
       frame = 0;
       intro = null;
-      handwritings.forEach(item => { item.progress = 1; });
+      [...reveals, ...inks, ...handwritings, track].forEach(item => { item.progress = 1; });
       root.classList.remove('motion-ready');
       root.classList.remove('motion-pending');
       inks.forEach(item => item.image.removeAttribute('mask'));
@@ -189,6 +210,10 @@
     schedule();
   }, {passive: true});
   window.addEventListener('resize', refresh, {passive: true});
+  window.addEventListener('scrollend', schedule, {passive: true});
+  visualViewport?.addEventListener('resize', schedule, {passive: true});
+  visualViewport?.addEventListener('scroll', schedule, {passive: true});
+  visualViewport?.addEventListener('scrollend', schedule, {passive: true});
   window.addEventListener('pageshow', refresh);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
   reducedMotion.addEventListener('change', configure);
